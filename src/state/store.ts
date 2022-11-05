@@ -1,12 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import bankReducer from './bank/bank.slice';
+import rootReducer from './reducer';
 
 export const store = configureStore({
-  reducer: {
-    bank: bankReducer,
-  },
+  reducer: rootReducer,
 });
-
 export type AppStateType = ReturnType<typeof store.getState>;
 
 export type AppDispatchType = typeof store.dispatch;

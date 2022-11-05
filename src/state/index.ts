@@ -1,3 +1,3 @@
 export * from './store';
-export * from './bank/bank.slice';
-export * from './pools/pools.slice';
+export * from './reducer';
+export * as bankActions from './bank/actions';

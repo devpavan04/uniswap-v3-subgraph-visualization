@@ -1,17 +1,23 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { AppStateType, depositMoney, withdrawMoney, bankrupt } from './state';
+import { useEffect } from 'react';
+import { useActions } from './hooks/useActions';
+import { useTypedSelector } from './hooks/useTypedSelectors';
+import { AppStateType } from './state';
 
 const App = () => {
-  const { value } = useSelector((state: AppStateType) => state.bank);
-  const dispatch = useDispatch();
+  const { depositMoney, withdrawMoney, bankrupt } = useActions();
+
+  const { balance } = useTypedSelector((state: AppStateType) => state.bank);
+
+  useEffect(() => {}, []);
 
   return (
     <>
-      <div>Value: {value}</div>
+      <h1>Hello, World!</h1>
+      <div>Value: {balance}</div>
       <br />
-      <button onClick={() => dispatch(depositMoney(100))}>Deposit</button>
-      <button onClick={() => dispatch(withdrawMoney(50))}>Withdraw</button>
-      <button onClick={() => dispatch(bankrupt())}>Bankrupt</button>
+      <button onClick={() => depositMoney(100)}>Deposit</button>
+      <button onClick={() => withdrawMoney(50)}>Withdraw</button>
+      <button onClick={() => bankrupt()}>Bankrupt</button>
     </>
   );
 };
