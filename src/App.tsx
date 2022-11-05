@@ -1,9 +1,8 @@
-import { RootState } from './state/store';
 import { useSelector, useDispatch } from 'react-redux';
-import { depositMoney, withdrawMoney, bankrupt } from './state/bank/slice';
+import { AppStateType, depositMoney, withdrawMoney, bankrupt } from './state';
 
 const App = () => {
-  const { value } = useSelector((state: RootState) => state.bank);
+  const { value } = useSelector((state: AppStateType) => state.bank);
   const dispatch = useDispatch();
 
   return (

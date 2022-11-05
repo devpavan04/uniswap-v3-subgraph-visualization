@@ -1,8 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
-import { BankState } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { BankStateType } from './bank.types';
 
-const initialState: BankState = {
+const initialState: BankStateType = {
   value: 0,
 };
 
@@ -23,5 +22,4 @@ export const bankSlice = createSlice({
 });
 
 export const { depositMoney, withdrawMoney, bankrupt } = bankSlice.actions;
-
 export default bankSlice.reducer;
