@@ -1,24 +1,25 @@
-import { useEffect } from 'react';
-import { useActions } from './hooks/useActions';
-import { useTypedSelector } from './hooks/useTypedSelectors';
-import { AppStateType } from './state';
+import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
+import { Page, Tabs } from '@geist-ui/core';
+import Pools from './components/pools/pools.component';
 
 const App = () => {
-  const { depositMoney, withdrawMoney, bankrupt } = useActions();
-
-  const { balance } = useTypedSelector((state: AppStateType) => state.bank);
-
-  useEffect(() => {}, []);
-
   return (
-    <>
-      <h1>Hello, World!</h1>
-      <div>Value: {balance}</div>
-      <br />
-      <button onClick={() => depositMoney(100)}>Deposit</button>
-      <button onClick={() => withdrawMoney(50)}>Withdraw</button>
-      <button onClick={() => bankrupt()}>Bankrupt</button>
-    </>
+    <div>
+      <Page style={{ maxWidth: '1200px', margin: 'auto', padding: '1rem' }}>
+        <Page.Header style={{ padding: '1rem 0' }}>
+          <h2>Uniswap V3 Subgraph Visualization 🦄</h2>
+        </Page.Header>
+        <Page.Content style={{ padding: '0' }}>
+          <Tabs initialValue='1'>
+            <Tabs.Item label='Pools' value='1'>
+              <Pools />
+            </Tabs.Item>
+            <Tabs.Item label='Tokens' value='2'></Tabs.Item>
+            <Tabs.Item label='Transactions' value='3'></Tabs.Item>
+          </Tabs>
+        </Page.Content>
+      </Page>
+    </div>
   );
 };
 
