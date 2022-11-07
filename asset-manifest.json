@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/uniswap-v3-subgraph-visualization/static/js/main.660f8c7f.js",
+    "index.html": "/uniswap-v3-subgraph-visualization/index.html",
+    "main.660f8c7f.js.map": "/uniswap-v3-subgraph-visualization/static/js/main.660f8c7f.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.660f8c7f.js"
+  ]
+}
