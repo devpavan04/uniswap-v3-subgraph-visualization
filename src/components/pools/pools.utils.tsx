@@ -1,5 +1,7 @@
-import { utils } from 'ethers';
 import { Avatar, Spacer } from '@geist-ui/core';
+import { ExternalLink } from '@geist-ui/icons';
+import { utils } from 'ethers';
+import { CurrencyToAbbreviation } from 'currency-to-abbreviation';
 import { PoolType, PoolsTableType } from './pools.types';
 
 export const getPoolsTableData = (pools: PoolType[]) => {
@@ -10,9 +12,6 @@ export const getPoolsTableData = (pools: PoolType[]) => {
   pools.map((pool: PoolType, index: number) => {
     const token0Address = getAddress(pool.token0.id);
     const token1Address = getAddress(pool.token1.id);
-
-    const totalValueLockedUSD = (Number(pool.totalValueLockedUSD) / 1000000).toFixed(2);
-    const twentyFourHourVolume = (Number(pool.poolDayData[0].volumeUSD) / 1000000).toFixed(2);
 
     let poolData = {
       pool: (
@@ -28,8 +27,13 @@ export const getPoolsTableData = (pools: PoolType[]) => {
           {pool.token1.symbol === 'WETH' ? 'ETH' : pool.token1.symbol === 'WBTC' ? 'BTC' : pool.token1.symbol}
         </>
       ),
-      tvl: `$${totalValueLockedUSD}m`,
-      volume24: `$${twentyFourHourVolume}m`,
+      tvl: CurrencyToAbbreviation({ inputNumber: Number(pool.totalValueLockedUSD) })?.toString(),
+      volume24: CurrencyToAbbreviation({ inputNumber: Number(pool.poolDayData[0].volumeUSD) })?.toString(),
+      link: (
+        <a href={`https://info.uniswap.org/#/pools/${pool.id}`} target='_blank'>
+          <ExternalLink size={20} />
+        </a>
+      ),
     };
 
     poolsTableData.push(poolData);

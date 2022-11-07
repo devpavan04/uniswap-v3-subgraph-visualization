@@ -1,11 +1,5 @@
 export type PoolType = {
   id: string;
-  poolDayData: [
-    {
-      id: string;
-      volumeUSD: string;
-    }
-  ];
   token0: {
     id: string;
     name: string;
@@ -17,10 +11,17 @@ export type PoolType = {
     symbol: string;
   };
   totalValueLockedUSD: string;
+  poolDayData: [
+    {
+      id: string;
+      volumeUSD: string;
+    }
+  ];
 };
 
 export type PoolsTableType = {
   pool: JSX.Element;
-  tvl: string;
-  volume24: string;
+  tvl?: string;
+  volume24?: string;
+  link: JSX.Element;
 }[];

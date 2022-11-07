@@ -1,39 +1,67 @@
-import { utils } from 'ethers';
 import { Avatar, Spacer } from '@geist-ui/core';
-import { PoolType, PoolsTableType } from './pools.types';
+import { ArrowDown, ArrowUp, ExternalLink } from '@geist-ui/icons';
+import { utils } from 'ethers';
+import { CurrencyToAbbreviation } from 'currency-to-abbreviation';
+import { TokenType, TokensTableType } from './tokens.types';
 
-export const getPoolsTableData = (pools: PoolType[]) => {
+export const getTokensTableData = (tokens: TokenType[]) => {
   const { getAddress } = utils;
 
-  let poolsTableData: PoolsTableType = [];
+  let tokensTableData: TokensTableType = [];
 
-  pools.map((pool: PoolType, index: number) => {
-    const token0Address = getAddress(pool.token0.id);
-    const token1Address = getAddress(pool.token1.id);
+  tokens.map((token: TokenType, index: number) => {
+    const tokenAddress = getAddress(token.id);
 
-    const totalValueLockedUSD = (Number(pool.totalValueLockedUSD) / 1000000).toFixed(2);
-    const twentyFourHourVolume = (Number(pool.poolDayData[0].volumeUSD) / 1000000).toFixed(2);
-
-    let poolData = {
-      pool: (
+    let tokenData = {
+      token: (
         <>
           <Avatar
-            src={`https://raw.githubusercontent.com/devpavan04/assets/master/blockchains/ethereum/assets/${token0Address}/logo.png`}
-          />
-          <Avatar
-            src={`https://raw.githubusercontent.com/devpavan04/assets/master/blockchains/ethereum/assets/${token1Address}/logo.png`}
+            src={`https://raw.githubusercontent.com/devpavan04/assets/master/blockchains/ethereum/assets/${tokenAddress}/logo.png`}
           />
           <Spacer />
-          {pool.token0.symbol === 'WETH' ? 'ETH' : pool.token0.symbol === 'WBTC' ? 'BTC' : pool.token0.symbol}/
-          {pool.token1.symbol === 'WETH' ? 'ETH' : pool.token1.symbol === 'WBTC' ? 'BTC' : pool.token1.symbol}
+          {token.name === 'Wrapped Ether' ? 'Ether' : token.name === 'Wrapped BTC' ? 'Bitcoin' : token.name}{' '}
+          {token.symbol === 'WETH' ? '(ETH)' : token.symbol === 'WBTC' ? '(BTC)' : `(${token.symbol})`}
         </>
       ),
-      tvl: `$${totalValueLockedUSD}m`,
-      volume24: `$${twentyFourHourVolume}m`,
+      price: CurrencyToAbbreviation({ inputNumber: Number(token.tokenDayData[0].priceUSD) })?.toString(),
+      priceChange: getPriceChange(Number(token.tokenDayData[0].open), Number(token.tokenDayData[0].close)),
+      tvl: CurrencyToAbbreviation({ inputNumber: Number(token.totalValueLockedUSD) })?.toString(),
+      volume24: CurrencyToAbbreviation({ inputNumber: Number(token.tokenDayData[0].volumeUSD) })?.toString(),
+      link: (
+        <a href={`https://info.uniswap.org/#/tokens/${token.id}`} target='_blank'>
+          <ExternalLink size={20} />
+        </a>
+      ),
     };
 
-    poolsTableData.push(poolData);
+    tokensTableData.push(tokenData);
   });
 
-  return { pools: poolsTableData };
+  return { tokens: tokensTableData };
+};
+
+export const getPriceChange = (oldPrice: number, newPrice: number) => {
+  let priceChange = ((newPrice - oldPrice) / oldPrice) * 100;
+
+  if (priceChange < 0) {
+    if (Math.abs(priceChange).toFixed(2) === '0.00') {
+      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}%</p>;
+    } else {
+      return (
+        <p style={{ color: 'red', display: 'flex', alignItems: 'center' }}>
+          {Math.abs(priceChange).toFixed(2)}% <ArrowDown size={20} />
+        </p>
+      );
+    }
+  } else {
+    if (Math.abs(priceChange).toFixed(2) === '0.00') {
+      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}%</p>;
+    } else {
+      return (
+        <p style={{ color: 'green', display: 'flex', alignItems: 'center' }}>
+          {Math.abs(priceChange).toFixed(2)}% <ArrowUp size={20} />
+        </p>
+      );
+    }
+  }
 };
