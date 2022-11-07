@@ -1,15 +1,23 @@
+import { utils } from 'ethers';
 import { Avatar, Spacer } from '@geist-ui/core';
 import { ExternalLink } from '@geist-ui/icons';
-import { utils } from 'ethers';
 import { CurrencyToAbbreviation } from 'currency-to-abbreviation';
 import { PoolType, PoolsTableType } from './pools.types';
 
+/**
+ * Helper function to populate geist UI's table component.
+ *
+ * Returns an updated version of the POOLS data fetched from the subgraph
+ * to update the POOLS table in the UI.
+ *
+ * Table array can include JSX elements.
+ */
 export const getPoolsTableData = (pools: PoolType[]) => {
   const { getAddress } = utils;
 
   let poolsTableData: PoolsTableType = [];
 
-  pools.map((pool: PoolType, index: number) => {
+  pools.map((pool: PoolType) => {
     const token0Address = getAddress(pool.token0.id);
     const token1Address = getAddress(pool.token1.id);
 

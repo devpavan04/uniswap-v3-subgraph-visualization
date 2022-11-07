@@ -17,6 +17,7 @@
     "@types/react-redux": "^7.1.24",
     "@types/redux-thunk": "^2.1.0",
     "currency-to-abbreviation": "^2.0.1",
+    "dayjs": "^1.11.6",
     "ethers": "^5.7.2",
     "graphql": "^16.6.0",
     "react": "^18.2.0",

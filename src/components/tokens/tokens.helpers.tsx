@@ -1,15 +1,23 @@
+import { utils } from 'ethers';
 import { Avatar, Spacer } from '@geist-ui/core';
 import { ArrowDown, ArrowUp, ExternalLink } from '@geist-ui/icons';
-import { utils } from 'ethers';
 import { CurrencyToAbbreviation } from 'currency-to-abbreviation';
 import { TokenType, TokensTableType } from './tokens.types';
 
+/**
+ * Helper function to populate geist UI's table component.
+ *
+ * Returns an updated version of the TOKENS data fetched from the subgraph
+ * to update the TOKENS table in the UI.
+ *
+ * Table array can include JSX elements.
+ */
 export const getTokensTableData = (tokens: TokenType[]) => {
   const { getAddress } = utils;
 
   let tokensTableData: TokensTableType = [];
 
-  tokens.map((token: TokenType, index: number) => {
+  tokens.map((token: TokenType) => {
     const tokenAddress = getAddress(token.id);
 
     let tokenData = {
@@ -40,12 +48,18 @@ export const getTokensTableData = (tokens: TokenType[]) => {
   return { tokens: tokensTableData };
 };
 
+/**
+ * Helper function to get the PRICE CHANGE value of a token in percentages.
+ *
+ * Returns a JSX element that is sent to the TOKENS table component.
+ * Includes PRICE CHANGE value and the UI changes with respect to the value.
+ */
 export const getPriceChange = (oldPrice: number, newPrice: number) => {
   let priceChange = ((newPrice - oldPrice) / oldPrice) * 100;
 
   if (priceChange < 0) {
     if (Math.abs(priceChange).toFixed(2) === '0.00') {
-      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}%</p>;
+      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}</p>;
     } else {
       return (
         <p style={{ color: 'red', display: 'flex', alignItems: 'center' }}>
@@ -55,7 +69,7 @@ export const getPriceChange = (oldPrice: number, newPrice: number) => {
     }
   } else {
     if (Math.abs(priceChange).toFixed(2) === '0.00') {
-      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}%</p>;
+      return <p style={{ color: 'green' }}>{Math.abs(priceChange).toFixed(2)}</p>;
     } else {
       return (
         <p style={{ color: 'green', display: 'flex', alignItems: 'center' }}>

@@ -1,21 +1,33 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_POOLS } from './pools.queries';
-import { PoolsTableType } from './pools.types';
+import { PoolsTableType, PoolsPropsType } from './pools.types';
 import { Tag, Table, Spinner, Grid, Pagination } from '@geist-ui/core';
 import { RefreshCw, ArrowUp, ArrowDown, ChevronRightCircle, ChevronLeftCircle } from '@geist-ui/icons';
-import { getPoolsTableData } from './pools.utils';
+import { getPoolsTableData } from './pools.helpers';
 import { NetworkStatus } from '@apollo/client';
 
-const Pools = ({ _pageSize, _totalPageCount }: { _pageSize: number; _totalPageCount: number }) => {
+const Pools = ({ _pageSize, _totalPageCount }: PoolsPropsType) => {
+  // Data order and sorting
+  const ORDER_BY = 'totalValueLockedUSD';
+  const [orderDirection, setOrderDirection] = useState<string>('desc');
+  const handleOrderDirection = () => {
+    setOrderDirection((prevState) => (prevState === 'desc' ? 'asc' : 'desc'));
+  };
+
+  // Pagination
   const PAGE_SIZE = _pageSize;
   const TOTAL_PAGE_COUNT = _totalPageCount;
-  const ORDER_BY = 'totalValueLockedUSD';
-
   const [pageCount, setPageCount] = useState<number>(1);
-  const [orderDirection, setOrderDirection] = useState<string>('desc');
+
+  const handlePageChange = (val: number) => {
+    setPageCount(val);
+  };
+
+  // Updated pools data i.e shown in the UI
   const [pools, setPools] = useState<PoolsTableType>([]);
 
+  // Fetch subgraph data using apollo client's useQuery
   const { loading, data, error, refetch, networkStatus } = useQuery(GET_POOLS, {
     variables: {
       first: PAGE_SIZE,
@@ -26,18 +38,12 @@ const Pools = ({ _pageSize, _totalPageCount }: { _pageSize: number; _totalPageCo
     notifyOnNetworkStatusChange: true,
   });
 
-  const handleOrderDirection = () => {
-    setOrderDirection((prevState) => (prevState === 'desc' ? 'asc' : 'desc'));
-  };
-
+  // Refetch the data whenever need using refetch function returned from the useQuery hook
   const handleRefetch = () => {
     refetch({ first: PAGE_SIZE, orderBy: ORDER_BY, orderDirection, skip: (pageCount - 1) * PAGE_SIZE });
   };
 
-  const handlePageChange = (val: number) => {
-    setPageCount(val);
-  };
-
+  // Get the updated pools data that should be shown in the UI upon every new query or data refetching
   useEffect(() => {
     if (data) {
       const { pools } = getPoolsTableData(data.pools);

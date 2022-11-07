@@ -1,8 +1,5 @@
 import { gql } from '@apollo/client';
 
-// GET Tokens
-// volumeUSD > 100k
-// totalValueLockedUSD_gt > 1m
 export const GET_TOKENS = gql`
   query ($first: Int, $orderBy: String, $orderDirection: String, $skip: Int) {
     tokens(
@@ -28,7 +25,6 @@ export const GET_TOKENS = gql`
   }
 `;
 
-// GET Token
 export const GET_TOKEN = gql`
   query ($id: Int!) {
     token(id: $id) {

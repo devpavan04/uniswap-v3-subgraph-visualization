@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import { useQuery, NetworkStatus } from '@apollo/client';
 import { Tag, Table, Spinner, Grid, Pagination } from '@geist-ui/core';
 import { RefreshCw, ArrowUp, ArrowDown, ChevronRightCircle, ChevronLeftCircle } from '@geist-ui/icons';
-import { GET_TOKENS } from './tokens.queries';
-import { TokensTableType, TokensPropsType } from './tokens.types';
-import { getTokensTableData } from './tokens.helpers';
+import { GET_TRANSACTIONS } from './transactions.queries';
+import { TransactionsTableType, TransactionsPropsType } from './transactions.types';
+import { getTransactionsTableData } from './transactions.helpers';
 
-const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
+const Transactions = ({ _pageSize, _totalPageCount }: TransactionsPropsType) => {
   // Data order and sorting
-  const ORDER_BY = 'totalValueLockedUSD';
+  const ORDER_BY = 'timestamp';
   const [orderDirection, setOrderDirection] = useState<string>('desc');
   const handleOrderDirection = () => {
     setOrderDirection((prevState) => (prevState === 'desc' ? 'asc' : 'desc'));
@@ -23,11 +23,11 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
     setPageCount(val);
   };
 
-  // Updated tokens data i.e shown in the UI
-  const [tokens, setTokens] = useState<TokensTableType>([]);
+  // Updated transactions data i.e shown in the UI
+  const [transactions, setTransactions] = useState<TransactionsTableType>([]);
 
   // Fetch subgraph data using apollo client's useQuery
-  const { loading, data, error, refetch, networkStatus } = useQuery(GET_TOKENS, {
+  const { loading, data, error, refetch, networkStatus } = useQuery(GET_TRANSACTIONS, {
     variables: {
       first: PAGE_SIZE,
       orderBy: ORDER_BY,
@@ -42,11 +42,11 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
     refetch({ first: PAGE_SIZE, orderBy: ORDER_BY, orderDirection, skip: (pageCount - 1) * PAGE_SIZE });
   };
 
-  // Get the updated tokens data that should be shown in the UI upon every new query or data refetching
+  // Get the updated transactions data that should be shown in the UI upon every new query or data refetching
   useEffect(() => {
     if (data) {
-      const { tokens } = getTokensTableData(data.tokens);
-      setTokens(tokens);
+      const { transactions } = getTransactionsTableData(data.transactions);
+      setTransactions(transactions);
     }
   }, [data]);
 
@@ -59,7 +59,7 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
           alignItems='center'
           style={{ alignItems: 'center', gap: '1rem', padding: '1rem 0' }}
         >
-          <h3 style={{ margin: '0' }}>Top Tokens</h3>
+          <h3 style={{ margin: '0' }}>Transactions</h3>
           {networkStatus === NetworkStatus.refetch || loading ? (
             <Spinner />
           ) : error ? (
@@ -71,14 +71,16 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
         </Grid>
       </Grid.Container>
 
-      <Table data={tokens}>
-        <Table.Column prop='token' label='Name' />
-        <Table.Column prop='price' label='Price' />
-        <Table.Column prop='priceChange' label='Price Change 24H' />
-        <Table.Column prop='volume24' label='Volume 24H' />
-        <Table.Column prop='tvl'>
+      <Table data={transactions}>
+        <Table.Column prop='transactions' label='Transactions' />
+        <Table.Column prop='transactionType' label='Type' />
+        <Table.Column prop='totalValue' label='Total Value' />
+        <Table.Column prop='tokenAmount0' label='Token Amount 0' />
+        <Table.Column prop='tokenAmount1' label='Token Amount 1' />
+        <Table.Column prop='account' label='Sender' />
+        <Table.Column prop='time'>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            TVL{' '}
+            Time{' '}
             {orderDirection === 'desc' ? (
               <ArrowDown cursor='pointer' size={20} onClick={handleOrderDirection} />
             ) : (
@@ -86,7 +88,6 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
             )}
           </div>
         </Table.Column>
-        <Table.Column prop='link' label='Uniswap Info' />
       </Table>
 
       <Pagination
@@ -106,4 +107,4 @@ const Tokens = ({ _pageSize, _totalPageCount }: TokensPropsType) => {
   );
 };
 
-export default Tokens;
+export default Transactions;
